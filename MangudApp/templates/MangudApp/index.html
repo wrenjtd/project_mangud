@@ -1,0 +1,269 @@
+{% load static %}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Antic Slab' rel='stylesheet'>
+<style>
+    #game_table {
+        font-family: 'Antic Slab';
+        border-collapse: collapse;
+        width: 100%;
+        padding: 10px;
+    }
+    
+    #game_table_div{
+        padding-top: 5px;
+        padding-left: 200px;
+        padding-right: 100px;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+    
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+    #page_headline{
+        display: flex;
+        margin: auto;
+        justify-content: space-between;
+        padding-left: 200px;
+        padding-right: 100px;
+        border-bottom: 2px outset grey;
+        
+    }
+    #page_headline a {
+        text-decoration: none;
+    }
+    #header_2{
+        display: flex;
+        /* margin: auto; */
+        flex-direction: column;
+    }
+    #login_button{
+        padding-left: 5px;
+    }
+
+    #login_text{
+        font-family: 'Antic Slab';
+        display:flex;
+        justify-content:space-between;
+        
+    }
+    #registration_text{
+        font-family: 'Antic Slab';
+        display:flex;
+        justify-content:space-between;
+        
+    }
+
+    #cover{
+        position:fixed;
+        top:0;
+        left:0;
+        background:rgba(0,0,0,0.6);
+        z-index:5;
+        width:100%;
+        height:100%;
+        display:none;
+    }
+    #loginScreen{
+        height:380px;
+        width:340px;
+        left:50%;
+        top:40%;
+        transform:translate(-50%,-50%);
+        position: fixed;
+        z-index:10;
+        display:none;
+        background: rgb(245,245,245);
+        border:5px solid #cccccc;
+        border-radius:10px;
+        padding-right: 7px;
+        padding-left:7px;
+    }
+    #registerScreen{
+        height:380px;
+        width:340px;
+        left:50%;
+        top:40%;
+        transform:translate(-50%,-50%);
+        position: fixed;
+        z-index:10;
+        display:none;
+        background: rgb(245,245,245);
+        border:5px solid #cccccc;
+        border-radius:10px;
+        padding-right: 7px;
+        padding-left:7px;
+    }
+    #loginScreen:target, #loginScreen:target + #cover{
+        display:block;
+        opacity:1;
+    }
+    #registerScreen:target, #registerScreen:target + #cover{
+        display:block;
+        opacity:1;
+    }
+    .cancel{
+        display:block;
+        position:absolute;
+        top:3px;
+        right:2px;
+        background:rgb(245,245,245);
+        color:black;
+        height:30px;
+        width:35px;
+        font-size:30px;
+        text-decoration:none;
+        text-align:center;
+        font-weight:bold;
+    }
+    #member_avatar{
+        width: 60px;
+        height: 60px;
+        padding-left: 10px;
+    }
+    #wish_link, #wish_link_NLI {
+        font-size: 9px;
+    }
+    .game_page_link a{
+        font-size: 10px;
+    }
+    /* #logout_button{
+        width: 50%;
+    } */
+    
+    h2 {
+        width:100%;
+        text-align: center;
+        margin-top: 25px;
+        margin-bottom: 0px;
+    }
+   #home_button{
+       height: 50px;
+   }
+</style>
+
+<body>
+    <!-- <h2>Coming Soon:</h2> -->
+    <div id="page_headline">
+        <a href="{% url 'MangudApp:index' %}"><img src="{% static 'MangudApp/logo.png' %}" alt="home" id="home_button"></a>
+        {% if user.is_authenticated %} 
+        <div id="header_2" >
+            <a href="{% url 'MangudApp:members' %}" id="avatar_link">
+                <img src="{% static 'MangudApp/blank_avatar.png' %}" title="{{user.username}}" id="member_avatar"/>
+            </a>
+           
+            <a href="{% url 'MangudApp:logout' %}"><img src="{% static 'MangudApp/logout_button.png' %}" alt="log_out" id="logout_button"/></a>
+            </div>
+
+        {% else %}
+
+        <a href="#loginScreen" id="login_link">
+            <img src="{% static 'MangudApp/login_button.png' %}" id = "login_button"/>
+        </a>
+        
+        {% endif %}
+    </div>
+
+    <div id="loginScreen">
+        <div id="login_text">
+            <a href="" class="cancel">&times;</a><br>
+            <form action ="verify_user/" method="post">
+                {% csrf_token %}
+                <h2>Sign in:</h2>         
+                <div id="signin_text">
+                        <span>Username:</span>
+                        <!-- <a href="{% url 'MangudApp:create_user' %}" >Register</a> -->
+                        <a href="#registerScreen" id="register_link" >Register</a>
+                </div>
+                <input type="text" size="44" name="username" placeholder="Not a Bot"/><br>
+                Password:<br>
+                <input type="password" size="44" name="password"/><br>
+                
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+    </div>
+    <div id="cover">
+    </div>
+
+    <div id="registerScreen">
+        <div id="registration_text">
+            <a href="" class="cancel">&times;</a><br>
+            <form action ="create_user_submission/" method="post">
+                {% csrf_token %}
+                <h2>Register:</h2>         
+                <div id="register_text">
+                    <span>Username:</span>
+                    <a href="#loginScreen" id="login_link" >Login</a>
+                </div>
+                <input type="text" size="44" name="username" /><br>
+                Email: <br>
+                <input type="email" size="44" name="member_email"><br>
+                Birthday: <br>
+                <input type="date" size="44" name="birthday"><br>
+                Password:<br>
+                <input type="password" size="44" name="password"/><br>
+                
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+    </div>
+    <div id="cover">
+    </div>
+
+<div id="game_table_div">
+    <table id="game_table">
+        <tr>
+            <th>Title</th>
+            <th>Cover Art</th>
+            <th>Publisher</th>
+            <th>Developer</th>
+            <th>Platform(s)</th>
+            <th>Release Date</th>
+        </tr>
+        <tr>
+        {% for game in current_games_list %}
+            {% if user.is_authenticated %}
+            <td><a id="game_{{game.id}}" class="game_page_link" href="{% url 'MangudApp:a_game' game.id %}">{{game.title}}</a><br>
+                <a href="#" id="wish_link" onclick="saveToWishlist({{game.id}})">Add to wishlist</a>
+            </td>
+            {% else %}
+            <td><a id="game_{{game.id}}" class="game_page_link" href="{% url 'MangudApp:a_game' game.id %}">{{game.title}}</a><br>
+                <a href="#loginScreen" id="wish_link_NLI">Add to wishlist</a>
+            </td>
+            {% endif %}
+            <!-- <td>Pending</td> -->
+            <td><img src="{{game.cover_art_url}}" alt=""></td>
+            <td>{{game.publisher}}</td>
+            <td>{{game.developer}}</td>
+            <td>{{game.publisher}}</td>
+            <td>{{game.release_date}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<script> 
+    function saveToWishlist(game_id){
+        let data = {
+            'gameid':game_id
+            }
+            let config = {
+            headers: {
+                'X-CSRFToken': '{{ csrf_token}}'
+            }
+        }
+        axios.post('{% url 'MangudApp:add_to_wishlist' %}', data, config).then(response=>{
+            console.log(response)
+        })
+            user.user_wishlist.add()
+        }
+    
+</script>
+    
+    
+</body>

@@ -1,0 +1,42 @@
+{% load static %}
+<link href='https://fonts.googleapis.com/css?family=Antic Slab' rel='stylesheet'>
+<style>
+    #member_avatar{
+            width: 60px;
+            height: 60px;
+}
+    #member_page_header{
+        display: flex;
+        margin: auto;
+        justify-content: space-between;
+        padding-left: 200px;
+        padding-right: 100px;
+        border-bottom: 2px outset grey;
+    }
+    #home_button{
+        height:50px;
+    }
+</style>
+
+
+
+
+
+<div id="member_page_header">
+    <div id="home_button_div">
+       <span> <a href="{% url 'MangudApp:index' %}"><img src="{% static 'MangudApp/logo.png' %}" alt="home" id="home_button"></a></span>
+    </div>
+    <div id="member_area_header">
+        <a href="{% url 'MangudApp:members' %}"><img src="{% static 'MangudApp/blank_avatar.png' %}" alt="{{user.username}} avatar" id="member_avatar"/></a>
+        <br><a href="{% url 'MangudApp:logout' %}"><img src="{% static 'MangudApp/logout_button.png' %}" alt="log_out" id="logout_button"/></a>
+    </div>
+</div>
+
+
+
+
+Game Title: {{current_game.title}}
+<br>Cover Url: <img src="{{current_game.cover_url}}">
+<br>Cover Developer:{{current_game.developer}}
+<br>Cover Publisher:{{current_game.publisher}}
+<br>Cover Platforms:{{current_game.platforms}}

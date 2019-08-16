@@ -1,0 +1,12 @@
+<form action ="create_user_submission/" method="post">
+    {% csrf_token %}
+    Username<br>
+    <input type="text" name="username"/><br>
+    Email: <br>
+    <input type="email" name="member_email"><br>
+    Birthday: <br>
+    <input type="date" name="birthday"><br>
+    Password
+    <input type="password" name="password"><br>
+    <input type="submit" value="Submit">
+</form>

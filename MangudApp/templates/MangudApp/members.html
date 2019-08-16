@@ -1,0 +1,121 @@
+{% load static %}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Antic Slab' rel='stylesheet'>
+
+<style>
+    #member_avatar{
+            width: 60px;
+            height: 60px;
+}
+    #member_page_header{
+        display: flex;
+        margin: auto;
+        justify-content: space-between;
+        padding-left: 200px;
+        padding-right: 100px;
+        border-bottom: 2px outset grey;
+    }
+    #home_button{
+        height:50px;
+    }
+    #wish_list{
+        font-family: 'Antic Slab';
+        width: 15%;
+        background-color: lightgrey;
+    }
+    #user_info_container{
+        margin: auto;
+    }
+    #email_box, #f_name_box, #l_name_box, #email_box {
+        background-color: lightblue
+    }
+    #user_info_container, #credentials_container, #wish_list_container{
+        font-family: 'Antic Slab';
+        padding-left: 200px;
+        padding-right: 100px;
+    }
+
+</style>
+<div id="member_page_header">
+    <div id="home_button_div">
+       <span> <a href="{% url 'MangudApp:index' %}"><img src="{% static 'MangudApp/logo.png' %}" alt="home" id="home_button"></a></span>
+    </div>
+    <div id="member_area_header">
+        <a href="{% url 'MangudApp:members' %}"><img src="{% static 'MangudApp/blank_avatar.png' %}" alt="{{user.username}} avatar" id="member_avatar"/></a>
+        <br><a href="{% url 'MangudApp:logout' %}"><img src="{% static 'MangudApp/logout_button.png' %}" alt="log_out" id="logout_button"/></a>
+    </div>
+</div>
+
+<div id= "user_info_container"><h2>Account Information</h2>
+    <form action ="{% url 'MangudApp:edit_user_submission'%}" method="post">
+        {% csrf_token %}    
+    Username:
+    <input type="text" value = "{{user.username}}" name="user_name" disabled><br>
+    First Name:
+    <input type="text" id="f_name_box" value = "{{user.first_name}}" name="first_name" ><br>
+    Last Name:
+    <input type="text" id="l_name_box" value = "{{user.last_name}}" name="last_name"> <br>
+    Email address:
+    <input type="text" id="email_box" value = "{{user.email}}" name = "email_address"><br>
+    {% if user.on_newsletter %}
+    <input type="checkbox" name="newsletter" value ="true" checked >Sign up for alerts<br>
+    {% else %}
+    <input type="checkbox" name="newsletter" value ="true">Sign up for alerts<br>
+    {% endif %}
+    <input type="submit" value="Update your info">
+    </form>
+
+</div>
+
+
+
+<div id= "credentials_container"><h2>Change Password</h2>
+    <form action ="{% url 'MangudApp:change_password_submission'%}" method="post">
+        {% csrf_token %}    
+    Current Password:
+    <input type="password" value = "password" name="current_password"><br>
+    New Password:
+    <input type="password" id="pass1"  name="pass1" ><br>
+    Repeat New Password:
+    <input type="password" id="pass2" name="pass2"> <br>
+    <input type="submit" value="Update your info">
+    </form>
+
+</div>
+
+
+
+
+<div id="wish_list_container">
+        <div id="wish_list_text">
+            <form action="{% url 'MangudApp:remove_from_wishlist'%}" method="post">
+                {% csrf_token %}
+                <select multiple size="20" id="wish_list" name="gid">
+                {% for game in user.saved_games.all %}
+                    <option value="{{game.id}}" >{{game.title}}</option>
+            <!-- <a href="#" id="wish_list_link" onclick="removefromWishlist({{game.id}})">Remove</a> -->
+                {% endfor %}
+                </select>
+                <br><input type="submit" value="Remove">
+            </form>
+    </div>
+</div>
+
+
+<script>
+    function removefromWishlist(game_id){
+        let data = {
+            'gameid':game_id
+            }
+            let config = {
+            headers: {
+                'X-CSRFToken': '{{ csrf_token}}'
+            }
+        }
+        axios.post('{% url 'MangudApp:remove_from_wishlist' %}', data, config).then(response=>{
+            console.log(response)
+        })
+            user.user_wishlist.remove()
+        }
+    
+</script>
