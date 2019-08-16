@@ -83,7 +83,7 @@ def game_details(request, games_id):
     context = {
         'current_game': current_game
     }
-    print(current_game)
+    
     return render(request, 'mangudapp/a_game.html', context)
 
 
